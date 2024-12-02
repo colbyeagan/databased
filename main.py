@@ -109,6 +109,45 @@ def get_apartment_ratings(session, apartment_id):
     results = session.query(ApartmentRating).filter(ApartmentRating.apartment_id == apartment_id).all()
     return results
 
+def update_rent(session, rating_id, new_rent):
+    """
+    Updates the rent field of a record in the apartment_ratings table.
+    """
+    try:
+        rating_to_update = session.query(ApartmentRating).filter_by(rating_id=rating_id).first()
+        
+        if rating_to_update and isinstance(new_rent, float):
+            rating_to_update.rent = new_rent
+            session.commit()
+            print(f"Rent for rating ID {rating_id} updated to {new_rent}.")
+        elif rating_to_update and not isinstance(rating_to_update, str):
+            print(f"Rent must be a float")
+        else:
+            print(f"No rating ID {rating_id} found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        session.rollback()
+
+# update a rating comment
+def update_comment(session, rating_id, new_comment):
+    """
+    Updates the rent field of a record in the apartment_ratings table.
+    """
+    try:
+        rating_to_update = session.query(ApartmentRating).filter_by(rating_id=rating_id).first()
+        
+        if rating_to_update and isinstance(new_comment, str):
+            rating_to_update.comments = new_comment
+            session.commit()
+            print(f"Rent for rating ID {rating_id} updated to {new_comment}.")
+        elif rating_to_update and not isinstance(rating_to_update, str):
+            print(f"Comment must be a string")
+        else:
+            print(f"No rating ID {rating_id} found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        session.rollback()
+
 # Main
 if __name__ == "__main__":
     # Initialize db
@@ -118,16 +157,13 @@ if __name__ == "__main__":
 
     # add a new record
     """
-    new_rating = ApartmentRating(
-        apartment_id=101,
+    add_apartment_rating(session, apartment_id=101,
         comments="Amazing stay",
         user_pid=730566108,
         rent=1500.00,
         bedrooms=2, 
         bathrooms=1,
-        year_of_review=2024
-    )
-    add_apartment_rating(session, new_rating)
+        year_of_review=2024)
     """
 
     
@@ -145,4 +181,16 @@ if __name__ == "__main__":
     """
     rating_id=1
     delete_apartment_rating(session, rating_id)
+    """
+
+    # update rent
+    """
+    rating_id=1
+    update_rent(session, rating_id, 1900.00)
+    """
+
+    #
+    """
+    rating_id=1
+    update_comment(session, rating_id, "Great stay!")
     """
