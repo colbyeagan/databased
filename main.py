@@ -58,6 +58,9 @@ def add_apartment_rating(session, apartment_name, comments, user_pid, rent, bedr
     if existing_review:
         raise ValueError(f"User {user_pid} already has a review for the year {year_of_review}.")
 
+    if(apartment_name == "Select"):
+        raise ValueError(f"Please choose an apartment for your review.")
+
     # If no existing review, proceed to create a new one
     new_rating = ApartmentRating(
         apartment_name=apartment_name,

@@ -111,6 +111,14 @@ class AddRecordPage:
         # Try to add the review to the database (Placeholder)
         try:
             # Replace this with your database logic
+            add_apartment_rating(session, 
+            apartment_name=(apartment_name),                  
+            comments="",  # You can extend the GUI to take comments
+            user_pid=user_id, 
+            rent=rent, 
+            bedrooms=bedrooms, 
+            bathrooms=bathrooms, 
+            year_of_review=year_of_review)
             print(f"Adding record: {apartment_name}, {user_id}, {rent}, {bedrooms}, {bathrooms}, {year_of_review}")
             messagebox.showinfo("Success", "Review submitted successfully!")
         except Exception as e:
