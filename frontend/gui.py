@@ -19,7 +19,7 @@ def get_apartment_list():
 def submit_review():
     # Collect data from entry fields
     try:
-        apartment_id = combo_apartment_id.get().split(" - ")[0]
+        apartment_name = combo_apartment_id.get().split(" - ")[0]
         user_id = int(entry_user_id.get())
         rent = float(entry_rent.get())
         bedrooms = int(entry_bedrooms.get())
@@ -30,14 +30,14 @@ def submit_review():
         return
 
     # Validation: Ensure all fields are filled
-    if not all([apartment_id, user_id, rent, bedrooms, bathrooms, year_of_review]):
+    if not all([apartment_name, user_id, rent, bedrooms, bathrooms, year_of_review]):
         messagebox.showwarning("Incomplete Data", "Please fill in all fields!")
         return
 
     # Try to add the review to the database
     try:
         add_apartment_rating(session, 
-            apartment_id=int(apartment_id),                  
+            apartment_name=(apartment_name),                  
             comments="",  # You can extend the GUI to take comments
             user_pid=user_id, 
             rent=rent, 
@@ -56,8 +56,18 @@ root.title("Apartment Review Submission")
 Label(root, text="Apartment ID:").grid(row=0, column=0, padx=10, pady=5)
 
 # Dropdown menu for Apartment IDs
-apartment_list = get_apartment_list()
-combo_apartment_id = ttk.Combobox(root, values=apartment_list, state="readonly")
+apartment_list = [
+    "Carolina Square", 
+    "Chancellor Square", 
+    "Courtyard Lofts", 
+    "Lark", 
+    "Mill Creek", 
+    "Shortbread", 
+    "The Edition", 
+    "Union", 
+    "Warehouse"
+]
+combo_apartment_id = ttk.Combobox(root, values=sorted(apartment_list), state="readonly")
 combo_apartment_id.set("Select")  # Default value
 combo_apartment_id.grid(row=0, column=1, padx=10, pady=5)
 

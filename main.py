@@ -10,7 +10,7 @@ class ApartmentRating(Base):
     __tablename__ = 'apartment_ratings'
 
     rating_id = Column(Integer, primary_key=True, autoincrement=True)
-    apartment_id = Column(Integer, ForeignKey('apartments.apartment_id'), nullable=False)
+    apartment_name = Column(Integer, ForeignKey('apartments.apartment_name'), nullable=False)
     comments = Column(String(255), nullable=True)
     user_pid = Column(Integer, nullable=False)
     rent = Column(Float, nullable=False)
@@ -18,8 +18,8 @@ class ApartmentRating(Base):
     bathrooms = Column(Integer, nullable=False)
     year_of_review = Column(Integer, nullable=True)
 
-    def __init__(self, apartment_id, comments, user_pid, rent, bedrooms, bathrooms, year_of_review):
-        self.apartment_id = apartment_id
+    def __init__(self, apartment_name, comments, user_pid, rent, bedrooms, bathrooms, year_of_review):
+        self.apartment_name = apartment_name
         self.comments = comments
         self.user_pid = user_pid
         self.rent = rent
@@ -30,7 +30,7 @@ class ApartmentRating(Base):
 class Apartments(Base):
     __tablename__ = 'apartments'
 
-    apartment_id = Column(Integer, autoincrement=True, primary_key=True)
+    apartment_name = Column(String(255), primary_key=True)
     location = Column(String(255), nullable=False)
     amenities = Column(Text, nullable=True)
     year_of_construction = Column(Integer, nullable=True)
@@ -48,7 +48,7 @@ def init_db():
     return engine
 
 # add a rating
-def add_apartment_rating(session, apartment_id, comments, user_pid, rent, bedrooms, bathrooms, year_of_review):
+def add_apartment_rating(session, apartment_name, comments, user_pid, rent, bedrooms, bathrooms, year_of_review):
     # Check if the user already has a review for the specified year
     existing_review = session.query(ApartmentRating).filter(
         ApartmentRating.user_pid == user_pid,
@@ -60,7 +60,7 @@ def add_apartment_rating(session, apartment_id, comments, user_pid, rent, bedroo
 
     # If no existing review, proceed to create a new one
     new_rating = ApartmentRating(
-        apartment_id=apartment_id,
+        apartment_name=apartment_name,
         comments=comments,
         user_pid=user_pid,
         rent=rent,
@@ -105,8 +105,8 @@ def udpate_apartment_rating(session, rating):
     session.commit()
 
 # return all records with matching apartment id
-def get_apartment_ratings(session, apartment_id):
-    results = session.query(ApartmentRating).filter(ApartmentRating.apartment_id == apartment_id).all()
+def get_apartment_ratings(session, apartment_name):
+    results = session.query(ApartmentRating).filter(ApartmentRating.apartment_name == apartment_name).all()
     return results
 
 def update_rent(session, rating_id, new_rent):
@@ -157,7 +157,7 @@ if __name__ == "__main__":
 
     # add a new record
     """
-    add_apartment_rating(session, apartment_id=101,
+    add_apartment_rating(session, apartment_name=101,
         comments="Amazing stay",
         user_pid=730566108,
         rent=1500.00,
