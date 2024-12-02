@@ -48,9 +48,32 @@ def init_db():
     return engine
 
 # add a rating
-def add_apartment_rating(session, rating):
-    session.add(rating)
-    session.commit()
+def add_apartment_rating(session, apartment_id, comments, user_pid, rent, bedrooms, bathrooms, year_of_review):
+    # Check if the user already has a review for the specified year
+    existing_review = session.query(ApartmentRating).filter(
+        ApartmentRating.user_pid == user_pid,
+        ApartmentRating.year_of_review == year_of_review
+    ).first()
+
+    if existing_review:
+        raise ValueError(f"User {user_pid} already has a review for the year {year_of_review}.")
+
+    # If no existing review, proceed to create a new one
+    new_rating = ApartmentRating(
+        apartment_id=apartment_id,
+        comments=comments,
+        user_pid=user_pid,
+        rent=rent,
+        bedrooms=bedrooms,
+        bathrooms=bathrooms,
+        year_of_review=year_of_review
+    )
+    try:
+        session.add(new_rating)
+        session.commit()  # Commit the transaction
+    except Exception as e:
+        session.rollback()  # Rollback in case of errors
+        raise e  # Re-raise the exception for the caller to handle
 
 # add an apartment
 def add_apartment(session, apartment):
