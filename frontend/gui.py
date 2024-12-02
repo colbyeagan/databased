@@ -133,9 +133,35 @@ class DeleteRecordPage:
         self.frame = Frame(root)
 
         Label(self.frame, text="Rating ID:").grid(row=0, column=0, padx=10, pady=5)
-        Entry(self.frame).grid(row=0, column=1, padx=10, pady=5)
+        # Assign and place the entry for Rating ID
+        self.entry_rating_id = Entry(self.frame)
+        self.entry_rating_id.grid(row=0, column=1, padx=10, pady=5)
 
-        Button(self.frame, text="Delete Record").grid(row=1, column=0, columnspan=2, pady=10)
+        Button(self.frame, text="Delete Record", command=self.delete_review).grid(row=1, column=0, columnspan=2, pady=10)
+    
+    def delete_review(self):
+    # Collect data from entry fields
+        try:
+        # Assuming the review to delete is identified by a unique rating ID
+            rating_id = int(self.entry_rating_id.get())
+        except ValueError:
+            messagebox.showerror("Invalid Input", "Please enter a valid numeric Rating ID.")
+            return
+
+        # Validation: Ensure the field is filled
+        if not rating_id:
+            messagebox.showwarning("Incomplete Data", "Please enter the Rating ID to delete the review!")
+            return
+
+        # Try to delete the review from the database
+        try:
+            delete_apartment_rating(session, rating_id)  # Call the backend method
+            print(f"Deleting review with Rating ID: {rating_id}")
+            messagebox.showinfo("Success", f"Review with Rating ID {rating_id} deleted successfully!")
+        except ValueError as ve:
+            messagebox.showerror("Error", f"Review not found: {ve}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to delete review: {e}")
 
 
 class UpdateRentPage:
