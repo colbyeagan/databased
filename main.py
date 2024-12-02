@@ -90,16 +90,22 @@ def delete_apartment_rating(session, rating_id):
 
     :param session: SQLAlchemy session object
     :param rating_id: The ID of the rating to delete
+    :raises ValueError: If no rating is found with the provided rating_id
     """
-    # Query the table for the specific rating_id and delete it
+    # Query the table for the specific rating_id
     rating_to_delete = session.query(ApartmentRating).filter_by(rating_id=rating_id).first()
-    
+
     if rating_to_delete:
-        session.delete(rating_to_delete)
-        session.commit()
-        print(f"Rating with ID {rating_id} deleted successfully.")
+        try:
+            session.delete(rating_to_delete)
+            session.commit()
+            print(f"Rating with ID {rating_id} deleted successfully.")
+        except Exception as e:
+            session.rollback()  # Rollback in case of an error
+            raise Exception(f"An error occurred while deleting the rating: {e}")
     else:
-        print(f"No rating found with ID {rating_id}.")
+        # Raise an exception if the rating is not found
+        raise ValueError(f"No rating found with ID {rating_id}.")
 
 
 # update a record
