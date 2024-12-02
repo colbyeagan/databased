@@ -10,17 +10,17 @@ class ApartmentRating(Base):
     __tablename__ = 'apartment_ratings'
 
     rating_id = Column(Integer, primary_key=True, autoincrement=True)
-    rating_value = Column(Float, nullable=False)
     apartment_id = Column(Integer, ForeignKey('apartments.apartment_id'), nullable=False)
+    comments = Column(String(255), nullable=True)
     user_id = Column(Integer, nullable=False)
     rent = Column(Float, nullable=False)
     bedrooms = Column(Integer, nullable=False)
     bathrooms = Column(Integer, nullable=False)
     year_of_review = Column(Integer, nullable=True)
 
-    def __init__(self, rating_value, apartment_id, user_id, rent, bedrooms, bathrooms, year_of_review):
-        self.rating_value = rating_value
+    def __init__(self, apartment_id, comments, user_id, rent, bedrooms, bathrooms, year_of_review):
         self.apartment_id = apartment_id
+        self.comments = comments
         self.user_id = user_id
         self.rent = rent
         self.bedrooms = bedrooms
