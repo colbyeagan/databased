@@ -12,16 +12,16 @@ class ApartmentRating(Base):
     rating_id = Column(Integer, primary_key=True, autoincrement=True)
     apartment_id = Column(Integer, ForeignKey('apartments.apartment_id'), nullable=False)
     comments = Column(String(255), nullable=True)
-    user_id = Column(Integer, nullable=False)
+    user_pid = Column(Integer, nullable=False)
     rent = Column(Float, nullable=False)
     bedrooms = Column(Integer, nullable=False)
     bathrooms = Column(Integer, nullable=False)
     year_of_review = Column(Integer, nullable=True)
 
-    def __init__(self, apartment_id, comments, user_id, rent, bedrooms, bathrooms, year_of_review):
+    def __init__(self, apartment_id, comments, user_pid, rent, bedrooms, bathrooms, year_of_review):
         self.apartment_id = apartment_id
         self.comments = comments
-        self.user_id = user_id
+        self.user_pid = user_pid
         self.rent = rent
         self.bedrooms = bedrooms
         self.bathrooms = bathrooms
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     new_rating = ApartmentRating(
         apartment_id=101,
         comments="Amazing stay",
-        user_id=1,
+        user_pid=730566108,
         rent=1500.00,
         bedrooms=2, 
         bathrooms=1,
