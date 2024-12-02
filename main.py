@@ -47,15 +47,44 @@ def init_db():
     Base.metadata.create_all(engine)
     return engine
 
-# add a record
+# add a rating
 def add_apartment_rating(session, rating):
     session.add(rating)
     session.commit()
 
-# add a record
+# add an apartment
 def add_apartment(session, apartment):
     session.add(apartment)
     session.commit()
+
+# delete a record
+def delete_apartment_rating(session, rating_id):
+    """
+    Deletes a rating from the apartment_ratings table using the rating_id.
+
+    :param session: SQLAlchemy session object
+    :param rating_id: The ID of the rating to delete
+    """
+    # Query the table for the specific rating_id and delete it
+    rating_to_delete = session.query(ApartmentRating).filter_by(rating_id=rating_id).first()
+    
+    if rating_to_delete:
+        session.delete(rating_to_delete)
+        session.commit()
+        print(f"Rating with ID {rating_id} deleted successfully.")
+    else:
+        print(f"No rating found with ID {rating_id}.")
+
+
+# update a record
+def udpate_apartment_rating(session, rating):
+    session.add(rating)
+    session.commit()
+
+# return all records with matching apartment id
+def get_apartment_ratings(session, apartment_id):
+    results = session.query(ApartmentRating).filter(ApartmentRating.apartment_id == apartment_id).all()
+    return results
 
 # Main
 if __name__ == "__main__":
@@ -67,8 +96,8 @@ if __name__ == "__main__":
     # add a new record
     """
     new_rating = ApartmentRating(
-        rating_value=4.5,
         apartment_id=101,
+        comments="Amazing stay",
         user_id=1,
         rent=1500.00,
         bedrooms=2, 
@@ -87,4 +116,10 @@ if __name__ == "__main__":
         1995
     )
     add_apartment(session, new_apartment)
+    """
+
+    # delete a review
+    """
+    rating_id=1
+    delete_apartment_rating(session, rating_id)
     """
