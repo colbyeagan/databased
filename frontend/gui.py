@@ -4,6 +4,8 @@ from tkinter import ttk
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from main import *  # Import your database logic here
+from tkinter import Text
+
 
 # Initialize database
 engine = init_db()
@@ -163,7 +165,75 @@ class UpdateCommentPage:
 class ShowAllDataPage:
     def __init__(self, root):
         self.frame = Frame(root)
-        Label(self.frame, text="Show All Data Page (To be implemented)").grid(row=0, column=0, padx=10, pady=10)
+        self.session = session  # Store the database session
+
+        Label(self.frame, text="Apartment Name:").grid(row=0, column=0, padx=10, pady=5)
+
+        # Dropdown menu for apartment names
+        self.combo_apartment_id = ttk.Combobox(
+            self.frame,
+            values=sorted([
+                "Carolina Square", 
+                "Chancellor Square", 
+                "Courtyard Lofts", 
+                "Lark", 
+                "Mill Creek", 
+                "Shortbread", 
+                "The Edition", 
+                "Union", 
+                "Warehouse"
+            ]),
+            state="readonly",
+        )
+        self.combo_apartment_id.set("Select")  # Default value
+        self.combo_apartment_id.grid(row=0, column=1, padx=10, pady=5)
+
+        # Button to show all entries
+        Button(self.frame, text="Show all entries", command=self.show_all_apt_data).grid(row=1, column=0, columnspan=2, pady=10)
+
+        # Text widget to display query results
+        self.results_text = Text(self.frame, width=60, height=20, wrap=WORD)
+        self.results_text.grid(row=2, column=0, columnspan=2, padx=10, pady=5)
+        self.results_text.config(state=DISABLED)  # Make it read-only by default
+
+    def show_all_apt_data(self):
+        apartment_name = self.combo_apartment_id.get()
+
+        if apartment_name == "Select":
+            messagebox.showwarning("Input Error", "Please select an apartment name!")
+            return
+
+        # Fetch data from the database
+        try:
+            results = get_apt_reviews(self.session, apartment_name)
+
+            # If no results, show a message
+            if not results:
+                self.results_text.config(state=NORMAL)
+                self.results_text.delete(1.0, END)  # Clear previous content
+                self.results_text.insert(END, "No reviews found for the selected apartment.")
+                self.results_text.config(state=DISABLED)
+                return
+
+            # Display results in the text widget
+            self.results_text.config(state=NORMAL)
+            self.results_text.delete(1.0, END)  # Clear previous content
+            for review in results:
+                self.results_text.insert(
+                    END,
+                    f"Review ID: {review.rating_id}\n"
+                    f"User ID: {review.user_pid}\n"
+                    f"Rent: {review.rent}\n"
+                    f"Bedrooms: {review.bedrooms}\n"
+                    f"Bathrooms: {review.bathrooms}\n"
+                    f"Year of Review: {review.year_of_review}\n"
+                    f"Comments: {review.comments}\n"
+                    f"{'-' * 40}\n"
+                )
+            self.results_text.config(state=DISABLED)  # Make it read-only again
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to fetch reviews: {e}")
+
 
 
 # Run the Application
