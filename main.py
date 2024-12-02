@@ -10,7 +10,6 @@ class ApartmentRating(Base):
     __tablename__ = 'apartment_ratings'
 
     rating_id = Column(Integer, primary_key=True, autoincrement=True)
-    rating_value = Column(Float, nullable=False)
     apartment_id = Column(Integer, ForeignKey('apartments.apartment_id'), nullable=False)
     user_id = Column(Integer, nullable=False)
     rent = Column(Float, nullable=False)
@@ -18,8 +17,7 @@ class ApartmentRating(Base):
     bathrooms = Column(Integer, nullable=False)
     year_of_review = Column(Integer, nullable=True)
 
-    def __init__(self, rating_value, apartment_id, user_id, rent, bedrooms, bathrooms, year_of_review):
-        self.rating_value = rating_value
+    def __init__(self, apartment_id, user_id, rent, bedrooms, bathrooms, year_of_review):
         self.apartment_id = apartment_id
         self.user_id = user_id
         self.rent = rent
@@ -47,15 +45,30 @@ def init_db():
     Base.metadata.create_all(engine)
     return engine
 
-# add a record
+# add a rating
 def add_apartment_rating(session, rating):
     session.add(rating)
     session.commit()
 
-# add a record
+# add an apartment
 def add_apartment(session, apartment):
     session.add(apartment)
     session.commit()
+
+# delete a record
+def delete_apartment_rating(session, rating):
+    session.delete(rating)
+    session.commit()
+
+# update a record
+def udpate_apartment_rating(session, rating):
+    session.add(rating)
+    session.commit()
+
+# return all records with matching apartment id
+def get_apartment_ratings(session, apartment_id):
+    results = session.query(ApartmentRating).filter(ApartmentRating.apartment_id == apartment_id).all()
+    return results
 
 # Main
 if __name__ == "__main__":
