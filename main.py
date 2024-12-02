@@ -30,15 +30,12 @@ class ApartmentRating(Base):
 class Apartments(Base):
     __tablename__ = 'apartments'
 
-    overall_rating_value = Column(Integer, nullable=False)
-    apartment_id = Column(Integer, nullable=False, primary_key=True)
+    apartment_id = Column(Integer, autoincrement=True, primary_key=True)
     location = Column(String(255), nullable=False)
     amenities = Column(Text, nullable=True)
     year_of_construction = Column(Integer, nullable=True)
 
-    def __init__(self, overall_rating_value, apartment_id, location, amenities, year_of_construction):
-        self.overall_rating_value = overall_rating_value
-        self.apartment_id = apartment_id
+    def __init__(self, location, amenities, year_of_construction):
         self.location = location
         self.amenities = amenities
         self.year_of_construction = year_of_construction
@@ -55,6 +52,11 @@ def add_apartment_rating(session, rating):
     session.add(rating)
     session.commit()
 
+# add a record
+def add_apartment(session, apartment):
+    session.add(apartment)
+    session.commit()
+
 # Main
 if __name__ == "__main__":
     # Initialize db
@@ -69,12 +71,20 @@ if __name__ == "__main__":
         apartment_id=101,
         user_id=1,
         rent=1500.00,
-        location="Downtown",
-        bedrooms=2,
+        bedrooms=2, 
         bathrooms=1,
-        amenities="Pool, Gym, Parking"
-        year=2024
+        year_of_review=2024
     )
-
     add_apartment_rating(session, new_rating)
+    """
+
+    
+    # add a new apartment
+    """
+    new_apartment = Apartments(
+        "602 M.L.K. Jr Blvd, Chapel Hill, NC 27514", 
+        "Pool, Gym", 
+        1995
+    )
+    add_apartment(session, new_apartment)
     """
