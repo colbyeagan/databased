@@ -189,7 +189,7 @@ if __name__ == "__main__":
     update_rent(session, rating_id, 1900.00)
     """
 
-    #
+    # update comment
     """
     rating_id=1
     update_comment(session, rating_id, "Great stay!")

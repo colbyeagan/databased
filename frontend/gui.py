@@ -3,7 +3,7 @@ from tkinter import messagebox
 from tkinter import ttk
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from ..main import Apartments, init_db, add_apartment_rating  # Replace with your module name
+from main import * 
 
 # Initialize database
 engine = init_db()
