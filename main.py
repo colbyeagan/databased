@@ -145,25 +145,41 @@ def update_rent(session, rating_id, new_rent):
         print(f"An error occurred: {e}")
         session.rollback()
 
-# update a rating comment
-def update_comment(session, rating_id, new_comment):
+
+def update_rent(session, rating_id, new_rent):
     """
     Updates the rent field of a record in the apartment_ratings table.
+
+    :param session: SQLAlchemy session object
+    :param rating_id: The ID of the rating to update
+    :param new_rent: The new rent value to set (must be a float)
+    :raises ValueError: If no rating is found with the provided rating_id
     """
     try:
+        # Query the database for the rating
         rating_to_update = session.query(ApartmentRating).filter_by(rating_id=rating_id).first()
-        
-        if rating_to_update and isinstance(new_comment, str):
-            rating_to_update.comments = new_comment
-            session.commit()
-            print(f"Rent for rating ID {rating_id} updated to {new_comment}.")
-        elif rating_to_update and not isinstance(rating_to_update, str):
-            print(f"Comment must be a string")
-        else:
-            print(f"No rating ID {rating_id} found.")
+
+        # Check if the rating exists
+        if not rating_to_update:
+            raise ValueError(f"No rating found with Rating ID {rating_id}.")
+
+        # Validate that new_rent is a float
+        if not isinstance(new_rent, float):
+            raise ValueError("The new rent must be a float value.")
+
+        # Update the rent and commit the transaction
+        rating_to_update.rent = new_rent
+        session.commit()
+        print(f"Rent for rating ID {rating_id} updated to {new_rent}.")
+
+    except ValueError as ve:
+        print(f"Validation error: {ve}")
+        raise ve  # Re-raise the ValueError for the caller to handle
     except Exception as e:
         print(f"An error occurred: {e}")
-        session.rollback()
+        session.rollback()  # Rollback the transaction in case of error
+        raise Exception(f"An error occurred while updating the rent: {e}")
+
 
 # Main
 if __name__ == "__main__":
