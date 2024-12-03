@@ -35,7 +35,8 @@ class Apartments(Base):
     amenities = Column(Text, nullable=True)
     year_of_construction = Column(Integer, nullable=True)
 
-    def __init__(self, location, amenities, year_of_construction):
+    def __init__(self, apartment_name, location, amenities, year_of_construction):
+        self.apartment_name = apartment_name
         self.location = location
         self.amenities = amenities
         self.year_of_construction = year_of_construction
@@ -78,9 +79,15 @@ def add_apartment_rating(session, apartment_name, comments, user_pid, rent, bedr
         session.rollback()  # Rollback in case of errors
         raise e  # Re-raise the exception for the caller to handle
 
-# add an apartment
-def add_apartment(session, apartment):
-    session.add(apartment)
+def add_apartment(session, apartment_name, location, amenities, year_of_construction):
+    existing_apartment = session.query(Apartments).filter_by(apartment_name=apartment_name, location=location).first()
+
+    if existing_apartment:
+        # Apartment already exists, do nothing
+        return
+
+    new_apartment = Apartments(apartment_name, location, amenities, year_of_construction)
+    session.add(new_apartment)
     session.commit()
 
 def get_apt_reviews(session, apartment_name):
@@ -183,16 +190,15 @@ if __name__ == "__main__":
         year_of_review=2024)
     """
 
-    
+    '''    
     # add a new apartment
-    """
     new_apartment = Apartments(
         "602 M.L.K. Jr Blvd, Chapel Hill, NC 27514", 
         "Pool, Gym", 
         1995
     )
     add_apartment(session, new_apartment)
-    """
+    '''
 
     # delete a review
     """

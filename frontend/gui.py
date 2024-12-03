@@ -37,6 +37,52 @@ class ApartmentManagementApp:
             "ShowAllDataPage": ShowAllDataPage(self.root),
         }
 
+        add_apartment(session, "Lark",
+        "602 M.L.K. Jr Blvd, Chapel Hill, NC 27514", 
+        "Pool, Gym", 
+        1995)
+
+        add_apartment(session, "Carolina Square",
+        "133 W Franklin St, Chapel Hill, NC 27516", 
+        "Pool, Gym", 
+        2015)
+
+        add_apartment(session, "Chancellor Square",
+        "211 Church St, Chapel Hill, NC 27516", 
+        "Pool, Gym", 
+        2000)
+
+        add_apartment(session, "Courtyard Lofts",
+        "431 W Franklin St, Chapel Hill, NC 27516", 
+        "Gym", 
+        1988)
+
+        add_apartment(session, "Mill Creek",
+        "700 MLK Blvd (Airport Rd) in Chapel Hill, NC", 
+        "Gym", 
+        1977)
+
+        add_apartment(session, "Shortbread",
+        "333 W Rosemary St #130, Chapel Hill, NC 27516", 
+        "Gym", 
+        2011)
+
+        add_apartment(session, "The Edition",
+        "322 W Rosemary St, Chapel Hill, NC 27516", 
+        "Pool, Gym", 
+        2024)
+
+        add_apartment(session, "Union",
+        "425 Hillsborough St", 
+        "Pool, Gym", 
+        2017)
+
+        add_apartment(session, "Warehouse",
+        "316 W Rosemary St", 
+        "Gym", 
+        2005)
+
+
         # Show the default page
         self.show_page("AddRecordPage")
 
