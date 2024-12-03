@@ -173,6 +173,7 @@ class AddRecordPage:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to submit review: {e}")
 
+# bro
 
 # Barebones Pages
 class DeleteRecordPage:
