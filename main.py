@@ -37,12 +37,12 @@ class Apartments(Base):
     year_of_construction = Column(Integer, nullable=True)
     number_of_submissions = Column(Integer, nullable=True)
 
-    def __init__(self, apartment_name, location, amenities, year_of_construction):
+    def __init__(self, apartment_name, location, amenities, year_of_construction, number_of_submissions=0):
         self.apartment_name = apartment_name
         self.location = location
         self.amenities = amenities
         self.year_of_construction = year_of_construction
-        self.number_of_submissions = 0
+        self.number_of_submissions = number_of_submissions
 
 # Function to initialize db
 def init_db():
@@ -106,7 +106,7 @@ def add_apartment(session, apartment_name, location, amenities, year_of_construc
         # Apartment already exists, do nothing
         return
 
-    new_apartment = Apartments(apartment_name, location, amenities, year_of_construction)
+    new_apartment = Apartments(apartment_name, location, amenities, year_of_construction, number_of_submissions=0)
     session.add(new_apartment)
     session.commit()
 
