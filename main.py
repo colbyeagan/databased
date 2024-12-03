@@ -101,9 +101,9 @@ BEGIN
     UPDATE apartments
     SET popularity_score = 
         CASE 
-            WHEN new.number_of_submissions >= 100 THEN 'Gold'
-            WHEN new.number_of_submissions >= 50 THEN 'Silver'
-            WHEN new.number_of_submissions >= 20 THEN 'Bronze'
+            WHEN new.number_of_submissions >= 10 THEN 'Gold'
+            WHEN new.number_of_submissions >= 5 THEN 'Silver'
+            WHEN new.number_of_submissions >= 2 THEN 'Bronze'
             ELSE NULL
         END
     WHERE apartment_name = old.apartment_name;

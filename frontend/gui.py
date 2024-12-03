@@ -345,21 +345,30 @@ class ShowAllDataPage:
             messagebox.showwarning("Input Error", "Please select an apartment name!")
             return
 
-        # Fetch data from the database
         try:
+            # Fetch popularity score
+            apartment = self.session.query(Apartments).filter_by(apartment_name=apartment_name).first()
+            if apartment and apartment.popularity_score:
+                popularity_text = f"Popularity Score for {apartment_name}: {apartment.popularity_score}\n"
+            else:
+                popularity_text = f"Popularity Score for {apartment_name}: N/A\n"
+
+            # Fetch reviews
             results = get_apt_reviews(self.session, apartment_name)
 
-            # If no results, show a message
+            # Clear the text widget and display popularity score
+            self.results_text.config(state=NORMAL)
+            self.results_text.delete(1.0, END)
+            self.results_text.insert(END, popularity_text)
+            self.results_text.insert(END, "-" * 40 + "\n")  # Divider
+
+            # If no reviews, display a message
             if not results:
-                self.results_text.config(state=NORMAL)
-                self.results_text.delete(1.0, END)  # Clear previous content
                 self.results_text.insert(END, "No reviews found for the selected apartment.")
                 self.results_text.config(state=DISABLED)
                 return
 
-            # Display results in the text widget
-            self.results_text.config(state=NORMAL)
-            self.results_text.delete(1.0, END)  # Clear previous content
+            # Display reviews
             for review in results:
                 self.results_text.insert(
                     END,
@@ -372,9 +381,12 @@ class ShowAllDataPage:
                     f"Comments: {review.comments}\n"
                     f"{'-' * 40}\n"
                 )
+
             self.results_text.config(state=DISABLED)  # Make it read-only again
+
         except Exception as e:
             messagebox.showerror("Error", f"Failed to fetch reviews: {e}")
+
 
 
 
