@@ -82,6 +82,7 @@ class ApartmentManagementApp:
         "Gym", 
         2005)
 
+        add_events()
 
         # Show the default page
         self.show_page("AddRecordPage")

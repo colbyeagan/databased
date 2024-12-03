@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Text
+from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Text, event, DDL
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
@@ -36,6 +36,7 @@ class Apartments(Base):
     amenities = Column(Text, nullable=True)
     year_of_construction = Column(Integer, nullable=True)
     number_of_submissions = Column(Integer, nullable=True)
+    popularity_score = Column(Text, nullable=True)
 
     def __init__(self, apartment_name, location, amenities, year_of_construction, number_of_submissions=0):
         self.apartment_name = apartment_name
@@ -43,6 +44,7 @@ class Apartments(Base):
         self.amenities = amenities
         self.year_of_construction = year_of_construction
         self.number_of_submissions = number_of_submissions
+        self.popularity_score = ""
 
 # Function to initialize db
 def init_db():
@@ -50,6 +52,69 @@ def init_db():
     engine = create_engine('sqlite:///UNCRentdb.db', echo=True)
     Base.metadata.create_all(engine)
     return engine
+
+# def set_popularity_score(mapper, connection, target):
+#     result = connection.execute(
+#         "SELECT COUNT(*) FROM reviews WHERE apartment_name = :apartment_name",
+#         {"apartment_name": target.apartment_name}
+#     ).fetchone()
+        
+#     # if target.number_of_submissions >= 100:
+#     #     target.popularity_score = 'Gold'
+#     # elif target.number_of_submissions >= 50:
+#     #     target.popularity_score = 'Silver'
+#     # elif target.number_of_submissions >= 20:
+#     #     target.popularity_score = 'Bronze'
+#     # else:
+#     #     target.popularity_score = None
+#     if result[0] >= 100:
+#         target.popularity_score = 'Gold'
+#     elif result[0] >= 50:
+#         target.popularity_score = 'Silver'
+#     elif result[0] >= 20:
+#         target.popularity_score = 'Bronze'
+#     else:
+#         target.popularity_score = None
+
+# # Attach event listeners
+# def add_events():
+#     event.listen(Apartments, 'before_insert', set_popularity_score)
+#     event.listen(Apartments, 'before_update', set_popularity_score)
+
+# Define the trigger using DDL
+update_number_of_submissions = DDL('''\
+CREATE TRIGGER update_number_of_submissions
+AFTER INSERT ON apartment_ratings
+BEGIN
+    UPDATE apartments
+    SET number_of_submissions = number_of_submissions + 1
+    WHERE apartment_name = NEW.apartment_name;
+END;''')
+
+# Attach the trigger to the ApartmentRating table
+event.listen(ApartmentRating.__table__, 'after_create', update_number_of_submissions)
+
+set_popularity_score = DDL('''\
+CREATE TRIGGER set_popularity_score
+AFTER UPDATE OF number_of_submissions ON apartments
+BEGIN
+    UPDATE apartments
+    SET popularity_score = 
+        CASE 
+            WHEN new.number_of_submissions >= 100 THEN 'Gold'
+            WHEN new.number_of_submissions >= 50 THEN 'Silver'
+            WHEN new.number_of_submissions >= 20 THEN 'Bronze'
+            ELSE NULL
+        END
+    WHERE apartment_name = old.apartment_name;
+END;''')
+
+def add_events():
+    event.listen(ApartmentRating.__table__, 'after_create', update_number_of_submissions)
+    event.listen(Apartments.__table__, 'after_create', set_popularity_score)
+
+# Attach the trigger to the Apartments table
+event.listen(Apartments.__table__, 'after_create', set_popularity_score)
 
 # add a rating
 def add_apartment_rating(session, apartment_name, comments, user_pid, rent, bedrooms, bathrooms, year_of_review):
