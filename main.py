@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from datetime import datetime
 
 # base class
 Base = declarative_base()
@@ -34,11 +35,13 @@ class Apartments(Base):
     location = Column(String(255), nullable=False)
     amenities = Column(Text, nullable=True)
     year_of_construction = Column(Integer, nullable=True)
+    number_of_submissions = Column(Integer, nullable=True)
 
     def __init__(self, location, amenities, year_of_construction):
         self.location = location
         self.amenities = amenities
         self.year_of_construction = year_of_construction
+        self.number_of_submissions = 0
 
 # Function to initialize db
 def init_db():
@@ -49,6 +52,23 @@ def init_db():
 
 # add a rating
 def add_apartment_rating(session, apartment_name, comments, user_pid, rent, bedrooms, bathrooms, year_of_review):
+
+    if not str(user_pid).isdigit() or len(str(user_pid)) != 9:
+        raise ValueError("User PID must be exactly 9 digits long.")
+
+    if rent <= 0:
+        raise ValueError("Rent must be a positive number.")
+
+    if bedrooms < 1:
+        raise ValueError("Bedrooms must be 1 or greater.")
+
+    if bathrooms < 1:
+        raise ValueError("Bathrooms must be 1 or greater.")
+
+    current_year = datetime.now().year
+    if year_of_review != current_year:
+        raise ValueError(f"Year of review must be the current year ({current_year}).")
+
     # Check if the user already has a review for the specified year
     existing_review = session.query(ApartmentRating).filter(
         ApartmentRating.user_pid == user_pid,
@@ -58,8 +78,8 @@ def add_apartment_rating(session, apartment_name, comments, user_pid, rent, bedr
     if existing_review:
         raise ValueError(f"User {user_pid} already has a review for the year {year_of_review}.")
 
-    if(apartment_name == "Select"):
-        raise ValueError(f"Please choose an apartment for your review.")
+    if apartment_name == "Select":
+        raise ValueError("Please choose an apartment for your review.")
 
     # If no existing review, proceed to create a new one
     new_rating = ApartmentRating(
