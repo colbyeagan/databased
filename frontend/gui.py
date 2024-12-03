@@ -82,6 +82,7 @@ class ApartmentManagementApp:
         "Gym", 
         2005)
 
+        add_events()
 
         # Show the default page
         self.show_page("AddRecordPage")
@@ -186,6 +187,7 @@ class AddRecordPage:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to submit review: {e}")
 
+# bro
 
 # Barebones Pages
 class DeleteRecordPage:
