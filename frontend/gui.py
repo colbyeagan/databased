@@ -215,12 +215,39 @@ class UpdateRentPage:
         self.frame = Frame(root)
 
         Label(self.frame, text="Rating ID:").grid(row=0, column=0, padx=10, pady=5)
-        Entry(self.frame).grid(row=0, column=1, padx=10, pady=5)
+        self.entry_rating_id = Entry(self.frame)
+        self.entry_rating_id.grid(row=0, column=1, padx=10, pady=5)
 
         Label(self.frame, text="New Rent:").grid(row=1, column=0, padx=10, pady=5)
-        Entry(self.frame).grid(row=1, column=1, padx=10, pady=5)
+        self.entry_new_rent = Entry(self.frame)
+        self.entry_new_rent.grid(row=1, column=1, padx=10, pady=5)
 
-        Button(self.frame, text="Update Rent").grid(row=2, column=0, columnspan=2, pady=10)
+        Button(self.frame, text="Update Rent", command=self.update_review_rent).grid(row=2, column=0, columnspan=2, pady=10)
+
+    def update_review_rent(self):
+        # Collect data from entry fields
+        try:
+            # Get the Rating ID and new rent value from the user
+            rating_id = int(self.entry_rating_id.get())
+            new_rent = float(self.entry_new_rent.get())
+        except ValueError:
+            messagebox.showerror("Invalid Input", "Please enter valid numeric values for Rating ID and Rent.")
+            return
+
+        # Validation: Ensure both fields are filled
+        if not all([rating_id, new_rent]):
+            messagebox.showwarning("Incomplete Data", "Please enter both the Rating ID and the new Rent value!")
+            return
+
+        # Try to update the review in the database
+        try:
+            update_rent(session, rating_id, new_rent)  # Call the backend method
+            print(f"Updating rent for Rating ID {rating_id} to {new_rent}")
+            messagebox.showinfo("Success", f"Rent for Rating ID {rating_id} updated successfully!")
+        except ValueError as ve:
+            messagebox.showerror("Error", f"Review not found: {ve}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to update rent: {e}")
 
 class UpdateCommentPage:
     def __init__(self, root):
