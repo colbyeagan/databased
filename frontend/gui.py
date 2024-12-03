@@ -159,7 +159,7 @@ class AddRecordPage:
             bedrooms = int(self.entry_bedrooms.get())
             bathrooms = int(self.entry_bathrooms.get())
             year_of_review = int(self.entry_year_of_review.get())
-            comments = self.entry_comments.get()
+            comments = self.text_comment.get("1.0", "end-1c")
         except ValueError:
             messagebox.showerror("Invalid Input", "Please enter valid numeric values for User ID, Rent, Bedrooms, Bathrooms, and Year of Review.")
             return
@@ -168,6 +168,7 @@ class AddRecordPage:
         if not all([apartment_name, user_id, rent, bedrooms, bathrooms, year_of_review]):
             messagebox.showwarning("Incomplete Data", "Please fill in all fields!")
             return
+        
 
         # Try to add the review to the database (Placeholder)
         try:
@@ -180,7 +181,7 @@ class AddRecordPage:
             bedrooms=bedrooms, 
             bathrooms=bathrooms, 
             year_of_review=year_of_review)
-            print(f"Adding record: {apartment_name}, {user_id}, {rent}, {bedrooms}, {bathrooms}, {year_of_review}")
+            print(f"Adding record: {apartment_name}, {user_id}, {rent}, {bedrooms}, {bathrooms}, {year_of_review}, {comments}")
             messagebox.showinfo("Success", "Review submitted successfully!")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to submit review: {e}")
