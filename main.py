@@ -83,6 +83,14 @@ def add_apartment(session, apartment):
     session.add(apartment)
     session.commit()
 
+def get_apt_reviews(session, apartment_name):
+    try:
+        results = session.query(ApartmentRating).filter_by(apartment_name=apartment_name).all()
+        return results
+    except Exception as e:
+        print(f"Error fetching apartment reviews: {e}")
+        return []
+
 # delete a record
 def delete_apartment_rating(session, rating_id):
     """
