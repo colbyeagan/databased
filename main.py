@@ -153,24 +153,34 @@ def get_apartment_ratings(session, apartment_name):
     results = session.query(ApartmentRating).filter(ApartmentRating.apartment_name == apartment_name).all()
     return results
 
-def update_rent(session, rating_id, new_rent):
+def update_comments(session, rating_id, new_comments):
     """
-    Updates the rent field of a record in the apartment_ratings table.
+    Updates the comments field of a record in the apartment_ratings table.
     """
     try:
+        # Query the database for the rating
         rating_to_update = session.query(ApartmentRating).filter_by(rating_id=rating_id).first()
-        
-        if rating_to_update and isinstance(new_rent, float):
-            rating_to_update.rent = new_rent
-            session.commit()
-            print(f"Rent for rating ID {rating_id} updated to {new_rent}.")
-        elif rating_to_update and not isinstance(rating_to_update, str):
-            print(f"Rent must be a float")
-        else:
-            print(f"No rating ID {rating_id} found.")
+
+        # Check if the rating exists
+        if not rating_to_update:
+            raise ValueError(f"No rating found with Rating ID {rating_id}.")
+
+        # Validate that new_rent is a string
+        if not isinstance(new_comments, str):
+            raise ValueError("The new comments must be a String value.")
+
+        # Update the rent and commit the transaction
+        rating_to_update.comments = new_comments
+        session.commit()
+        print(f"Comment for rating ID {rating_id} updated to {new_comments}.")
+
+    except ValueError as ve:
+        print(f"Validation error: {ve}")
+        raise ve  # Re-raise the ValueError for the caller to handle
     except Exception as e:
         print(f"An error occurred: {e}")
-        session.rollback()
+        session.rollback()  # Rollback the transaction in case of error
+        raise Exception(f"An error occurred while updating the comments: {e}")
 
 
 def update_rent(session, rating_id, new_rent):

@@ -268,12 +268,39 @@ class UpdateCommentPage:
         self.frame = Frame(root)
 
         Label(self.frame, text="Rating ID:").grid(row=0, column=0, padx=10, pady=5)
-        Entry(self.frame).grid(row=0, column=1, padx=10, pady=5)
+        self.entry_rating_id = Entry(self.frame)
+        self.entry_rating_id.grid(row=0, column=1, padx=10, pady=5)
 
-        Label(self.frame, text="New Comment:").grid(row=1, column=0, padx=10, pady=5)
-        Entry(self.frame).grid(row=1, column=1, padx=10, pady=5)
+        Label(self.frame, text="New Comments:").grid(row=1, column=0, padx=10, pady=5)
+        self.entry_new_comments = Entry(self.frame)
+        self.entry_new_comments.grid(row=1, column=1, padx=10, pady=5)
 
-        Button(self.frame, text="Update Comment").grid(row=2, column=0, columnspan=2, pady=10)
+        Button(self.frame, text="Update Comments", command=self.update_review_comments).grid(row=2, column=0, columnspan=2, pady=10)
+
+    def update_review_comments(self):
+        # Collect data from entry fields
+        try:
+            # Get the Rating ID and new rent value from the user
+            rating_id = int(self.entry_rating_id.get())
+            new_comments = self.entry_new_comments.get()
+        except ValueError:
+            messagebox.showerror("Invalid Input", "Please enter valid numeric values for Rating ID.")
+            return
+
+        # Validation: Ensure both fields are filled
+        if not all([rating_id]):
+            messagebox.showwarning("Incomplete Data", "Please enter the Rating ID!")
+            return
+
+        # Try to update the review in the database
+        try:
+            update_comments(session, rating_id, new_comments)  # Call the backend method
+            print(f"Updating rent for Rating ID {rating_id} to {new_comments}")
+            messagebox.showinfo("Success", f"Comments for Rating ID {rating_id} updated successfully!")
+        except ValueError as ve:
+            messagebox.showerror("Error", f"Review not found: {ve}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to update comment: {e}")
 
 class ShowAllDataPage:
     def __init__(self, root):
