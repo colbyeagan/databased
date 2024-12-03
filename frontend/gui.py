@@ -136,7 +136,19 @@ class AddRecordPage:
         self.entry_year_of_review = Entry(self.frame)
         self.entry_year_of_review.grid(row=5, column=1, padx=10, pady=5)
 
-        Button(self.frame, text="Submit Review", command=self.submit_review).grid(row=6, column=0, columnspan=2, pady=10)
+        Label(self.frame, text="Comment:").grid(row=6, column=0, padx=10, pady=5)
+        self.comment_frame = Frame(self.frame)
+        self.entry_comments = Entry(self.frame)
+        self.comment_frame.grid(row=6, column=1, padx=10, pady=5, sticky="nsew")
+        self.text_comment = Text(self.comment_frame, width=40, height=5, wrap="word")
+        self.text_comment.grid(row=0, column=0, sticky="nsew")
+        scrollbar = Scrollbar(self.comment_frame, command=self.text_comment.yview)
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        self.text_comment.config(yscrollcommand=scrollbar.set)
+        self.comment_frame.grid_rowconfigure(0, weight=1)
+        self.comment_frame.grid_columnconfigure(0, weight=1)
+
+        Button(self.frame, text="Submit Review", command=self.submit_review).grid(row=7, column=0, columnspan=2, pady=10)
 
     def submit_review(self):
         # Collect data from entry fields
@@ -147,6 +159,7 @@ class AddRecordPage:
             bedrooms = int(self.entry_bedrooms.get())
             bathrooms = int(self.entry_bathrooms.get())
             year_of_review = int(self.entry_year_of_review.get())
+            comments = self.entry_comments.get()
         except ValueError:
             messagebox.showerror("Invalid Input", "Please enter valid numeric values for User ID, Rent, Bedrooms, Bathrooms, and Year of Review.")
             return
@@ -161,7 +174,7 @@ class AddRecordPage:
             # Replace this with your database logic
             add_apartment_rating(session, 
             apartment_name=(apartment_name),                  
-            comments="",  # You can extend the GUI to take comments
+            comments=comments,  
             user_pid=user_id, 
             rent=rent, 
             bedrooms=bedrooms, 
